@@ -1,0 +1,48 @@
+function [Ein Eout wg] = ex2to6(lambdaExponent);
+% [Ein Eout wg]=ex2to6(lambdaExponent) is used to solve
+%   exercises 2 to 6 of HW6. The argument is the k parameter
+%   in the exercises
+
+    %%% TRAINING
+    % Load of training data
+    inDta=load('in.dta');
+    X1=inDta(:,1);
+    X2=inDta(:,2);
+    yTraining=inDta(:,3);
+
+    ZTraining=nonLinearTransform62(X1,X2);
+
+    % Linear regression (regularized)
+    wg = linearRegressionRegularized(ZTraining,yTraining,10^lambdaExponent);
+
+    % Calculation of Ein
+    yEstimated=sign(ZTraining*wg);
+    Ein=mean(yEstimated~=yTraining);
+
+    % Plot boundary (and examples)
+    subplot(1,2,1);
+    plotBoundary(ZTraining,yTraining,wg);
+    title(strcat('k=',num2str(lambdaExponent),', Ein=',num2str(Ein)));
+    axis([-2 2 -3 3]);
+
+    %%% TESTING
+    % Load of testing data
+    outDta=load('out.dta');
+    X1Testing=outDta(:,1);
+    X2Testing=outDta(:,2);
+    yTesting=outDta(:,3);
+
+    % Non-linear transformation
+    ZTesting=nonLinearTransform62(X1Testing,X2Testing);
+
+    % Calculation of Eout
+    yEstimatedTesting=sign(ZTesting*wg);
+    Eout=mean(yEstimatedTesting~=yTesting);
+
+    % Plot boundary (and test data)
+    subplot(1,2,2);
+    plotBoundary(ZTesting,yTesting,wg);
+    title(strcat('k=',num2str(lambdaExponent),', Eout=', num2str(Eout)));
+    axis([-2 2 -3 3]);
+
+end
